@@ -1,13 +1,66 @@
 import telebot
 import time
-bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-@bot.message_handler(commands=['start', 'help'])
+bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
+#defining buttons
+button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
+button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
+inline_keyboard = InlineKeyboardMarkup(row_width=2)
+inline_keyboard.add(button1, button2)
+
+
+#message handler for /start
+user_ID = []
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, 'خوش اومدی عزیزم',reply_markup=inline_keyboard)
+    if message.chat.id not in user_ID:
+        user_ID.append(message.chat.id)
+
+
+
+
+
+
+
+@bot.message_handler(commands=['help'])
 def welcome(message):
     # bot.send_message(message.chat.id, 'welcome to my bot.')
-    bot.reply_to(message,'this is a second message.')
+    bot.reply_to(message,'Hello to my bot.\n What is your name?')
 
-@bot.message_handler(content_types=['document', 'audio', 'voice', 'sticker'])
+
+    bot.register_next_step_handler(message, process_name)
+def process_name(message):
+    name = message.text
+    bot.send_message(message.chat.id, f'Hello {name}.\nHow old are you?')
+
+    bot.register_next_step_handler(message, process_age)
+def process_age(message):
+    age = message.text
+    bot.send_message(message.chat.id, f'your are {age} years old.\n Thank You')
+    print(user_ID)
+
+#call back button
+@bot.callback_query_handler(func=lambda call: True)
+def check_button(call):
+    if call.data == 'button_dollar':
+        bot.answer_callback_query(call.id, 'هنوز قیمت ها تعریف نشده', show_alert=True)
+
+    elif call.data == 'button_gold':
+        bot.answer_callback_query(call.id, 'قیمت ها هنوز نیومدن :(')
+
+
+
+
+@bot.message_handler(commands=['sudo'])
+def sudo(message):
+    for id in user_ID:
+        bot.send_message(id, 'I LOVE YOU!')
+
+
+
+@bot.message_handler(content_types=['document', 'audio', 'voice', 'sticker', 'emoji'])
 def handle_docs_audio(message):
     if message.audio:
         bot.reply_to(message, 'this is a audio file')
@@ -17,10 +70,12 @@ def handle_docs_audio(message):
         bot.reply_to(message, 'this is a voice message')
     elif message.sticker:
         bot.reply_to(message, 'this is a sticker message')
+    elif message.emoji:
+        bot.reply_to(message, 'this is a emoji')
 
-@bot.message_handler(regexp="2024")
+@bot.message_handler(regexp="ارز")
 def handle_2024(message):
-    bot.reply_to(message, 'this is a 2024 message')
+    bot.reply_to(message, 'الان نمیتونم بگم')
 
 
 @bot.message_handler(func=lambda message: message.document.mime_type == 'text/plain', content_types=['document'])
