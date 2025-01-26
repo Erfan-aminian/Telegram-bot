@@ -20,10 +20,6 @@ def start(message):
 
 
 
-
-
-
-
 @bot.message_handler(commands=['help'])
 def welcome(message):
     # bot.send_message(message.chat.id, 'welcome to my bot.')
