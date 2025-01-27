@@ -1,8 +1,31 @@
 import telebot
 import time
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import ReplyKeyboardMarkup
+
 
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
+#create menu button
+reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+reply_keyboard.add("ارز", "راهنما")
+
+@bot.message_handler(func=lambda message: True)
+def check_button(message):
+    if message.text == '':
+        pass
+    elif message.text == '':
+        pass
+    elif message.text == '':
+        pass
+    else:
+        bot.send_message(message, f'گزینه انتخابی رو پیدا نکردم/')
+        bot.send_message(message, '/start')
+
+
+
+
+
+
 #defining buttons
 button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
 button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
@@ -14,7 +37,7 @@ inline_keyboard.add(button1, button2)
 user_ID = []
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, 'خوش اومدی عزیزم',reply_markup=inline_keyboard)
+    bot.send_message(message.chat.id, 'خوش اومدی عزیزم', reply_markup=reply_keyboard)
     if message.chat.id not in user_ID:
         user_ID.append(message.chat.id)
 
@@ -23,7 +46,7 @@ def start(message):
 @bot.message_handler(commands=['help'])
 def welcome(message):
     # bot.send_message(message.chat.id, 'welcome to my bot.')
-    bot.reply_to(message,'Hello to my bot.\n What is your name?')
+    bot.reply_to(message,'Hello to my bot.\n What is your name?',reply_markup=inline_keyboard)
 
 
     bot.register_next_step_handler(message, process_name)
