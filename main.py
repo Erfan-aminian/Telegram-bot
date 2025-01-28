@@ -9,6 +9,8 @@ bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
 reply_keyboard.add("ارز", "راهنما")
 
+
+
 @bot.message_handler(func=lambda message: True)
 def check_button(message):
     if message.text == '':
