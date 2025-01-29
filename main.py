@@ -25,9 +25,6 @@ def check_button(message):
 
 
 
-
-
-
 #defining buttons
 button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
 button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
