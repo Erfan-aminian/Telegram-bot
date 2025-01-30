@@ -1,8 +1,23 @@
+
 import telebot
 import time
+import sqlite3
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup
-
+#database config
+connection = sqlite3.connect('users.db')
+curses = connection.cursor()
+create_table_query ="""
+    CREATE TABLE IF NOT EXISTS users(
+        id integer PRIMARY KEY,
+        first_name text,
+        last_name text,
+        phone_number text,
+    );
+"""
+curses.execute(create_table_query)
+connection.commit()
+connection.close()
 
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 #create menu button
