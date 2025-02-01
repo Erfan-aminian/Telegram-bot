@@ -6,25 +6,26 @@ import sqlite3
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup
 #database config
-Config.GetUsers()
+#Config.GetUsers()
+
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 #create menu button
 reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-reply_keyboard.add("ارز", "راهنما")
+reply_keyboard.add(InlineKeyboardButton("راهنما", callback_data="/help"))
 
 
 
-@bot.message_handler(func=lambda message: True)
-def check_button(message):
-    if message.text == '':
-        pass
-    elif message.text == '':
-        pass
-    elif message.text == '':
-        pass
-    else:
-        bot.send_message(message, f'گزینه انتخابی رو پیدا نکردم/')
-        bot.send_message(message, '/start')
+# @bot.message_handler(func=lambda message: True)
+# def check_button(message):
+#     if message.text == '':
+#         pass
+#     elif message.text == '':
+#         pass
+#     elif message.text == '':
+#         pass
+#     else:
+#         bot.send_message(message, f'گزینه انتخابی رو پیدا نکردم/')
+#         bot.send_message(message, '/start')
 
 
 
@@ -43,7 +44,10 @@ def start(message):
     if message.chat.id not in user_ID:
         user_ID.append(message.chat.id)
 
-
+@bot.callback_query_handler(func=lambda call: call.data == "/help")
+def handle_help_callback(call):
+    bot.answer_callback_query(call.id)
+    bot.send_message(call.message.chat.id, "این بخش راهنماست...")
 
 @bot.message_handler(commands=['help'])
 def welcome(message):
