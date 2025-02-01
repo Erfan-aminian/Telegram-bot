@@ -1,50 +1,12 @@
 from random import sample
-
+from db_config import Config
 import telebot
 import time
 import sqlite3
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup
 #database config
-connection = sqlite3.connect('users.db')
-curser = connection.cursor()
-create_table_query ="""
-    CREATE TABLE IF NOT EXISTS users(
-        id integer PRIMARY KEY,
-        first_name text,
-        last_name text,
-        phone_number text
-    );
-"""
-curser.execute(create_table_query)
-connection.commit()
-connection.close()
-sample_data_query ="""
-    INSERT INTO users (id, first_name, last_name, phone_number)
-    VALUES (?, ?, ?, ?)
-"""
-sample_data = [
-    (12344, 'ehsan', 'ghadiri', '0911122339'),
-    (14343, "Erfan", "Saberi", "123456789"),
-    (24344, "Ali", "Rezaei", "987654321"),
-]
-with sqlite3.connect('users.db') as connection:
-    curser = connection.cursor()
-    curser.executemany(sample_data_query,sample_data)
-
-fetch_data_query = """
-    SELECT * FROM users;
-
-"""
-rows = []
-with sqlite3.connect('users.db') as connection:
-    curser = connection.cursor()
-    curser.execute(fetch_data_query)
-    rows = curser.fetchall()
-for row in rows:
-    print(f'ID:{row[0]}, fname:{row[1]}, lname:{row[2]}, phone_number:{row[3]}')
-
-
+Config.GetUsers()
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 #create menu button
 reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
