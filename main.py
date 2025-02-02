@@ -5,35 +5,13 @@ import time
 import sqlite3
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup
-#database config
 #Config.GetUsers()
-
+# BOT API
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
-#create menu button
-reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-reply_keyboard.add(InlineKeyboardButton("راهنما", callback_data="/help"))
 
-
-
-# @bot.message_handler(func=lambda message: True)
-# def check_button(message):
-#     if message.text == '':
-#         pass
-#     elif message.text == '':
-#         pass
-#     elif message.text == '':
-#         pass
-#     else:
-#         bot.send_message(message, f'گزینه انتخابی رو پیدا نکردم/')
-#         bot.send_message(message, '/start')
-
-
-
-#defining buttons
-button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
-button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
-inline_keyboard = InlineKeyboardMarkup(row_width=2)
-inline_keyboard.add(button1, button2)
+#create first menu button
+reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, row_width=2)
+reply_keyboard.add("ارز","راهنما","تماس با ما")
 
 
 #message handler for /start
@@ -43,6 +21,35 @@ def start(message):
     bot.send_message(message.chat.id, 'خوش اومدی عزیزم', reply_markup=reply_keyboard)
     if message.chat.id not in user_ID:
         user_ID.append(message.chat.id)
+
+# Button dollar and gold
+reply_keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+reply_keyboard2.add("دلار","طلا")
+
+
+@bot.message_handler(func=lambda message: True)
+def check_button(message):
+    if message.text == 'ارز':
+        bot.reply_to(message,"قیمت کدوم رو می خوای از پایین انتخاب کن", reply_markup=reply_keyboard2)
+    elif message.text == 'راهنما':
+        bot.reply_to(message,"ما تو این ربات قیمت دلار، طلا و .. رو نمایش میدیم تو به کدومش نیاز داری ؟")
+    elif message.text == 'تماس با ما':
+        bot.reply_to(message,"برنامه نویس این ربات عرفان هست ")
+    else:
+        bot.send_message(message.chat.id, 'گزینه انتخابی رو پیدا نکردم')
+        bot.send_message(message.chat.id, '/start')
+
+
+
+# defining buttons
+
+button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
+button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
+inline_keyboard = InlineKeyboardMarkup(row_width=2)
+inline_keyboard.add(button1, button2)
+
+
+
 
 @bot.callback_query_handler(func=lambda call: call.data == "/help")
 def handle_help_callback(call):
