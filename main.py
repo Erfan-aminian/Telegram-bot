@@ -4,23 +4,45 @@ import telebot
 import time
 import sqlite3
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from telebot.types import ReplyKeyboardMarkup
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 #Config.GetUsers()
 # BOT API
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 
-#create first menu button
+# create first menu button
 reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, row_width=2)
-reply_keyboard.add("ارز","راهنما","تماس با ما")
-
+button = KeyboardButton(text='send my info', request_contact=True)
+reply_keyboard.add("ارز","راهنما",button,"تماس با ما")
 
 #message handler for /start
 user_ID = []
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, 'خوش اومدی عزیزم', reply_markup=reply_keyboard)
+    bot.send_message(message.chat.id, text='خوش اومدی عزیزم', reply_markup=reply_keyboard)
     if message.chat.id not in user_ID:
         user_ID.append(message.chat.id)
+
+# message handler for contact
+@bot.message_handler(content_types=['contact'])
+def contact(message):
+    if message.contact is not None:
+        contact_info = (
+            f"شماره تماس: {message.contact.phone_number}\n"
+            f"نام: {message.contact.first_name}\n"
+            f"نام خانوادگی: {message.contact.last_name if message.contact.last_name else 'وجود ندارد'}\n"
+            f"شناسه کاربر: {message.contact.user_id if message.contact.user_id else 'وجود ندارد'}"
+        )
+        bot.send_message(message.chat.id, text=contact_info)
+        data = (
+            message.contact.user_id,
+            f'{message.contact.first_name}',
+            f'{message.contact.last_name}',
+            f'{message.contact.phone_number}',
+        )
+        Config().AddUser(*data)
+    else:
+        bot.send_message(message.chat.id, text="اطلاعات تماس دریافت نشد.")
+
 
 # Button dollar and gold
 reply_keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
@@ -38,6 +60,7 @@ def check_button(message):
     else:
         bot.send_message(message.chat.id, 'گزینه انتخابی رو پیدا نکردم')
         bot.send_message(message.chat.id, '/start')
+        Config.GetUsers()
 
 
 
