@@ -16,14 +16,17 @@ class Config:
             cursor.execute(create_table_query)
             connection.commit()
 
-    def AddUser(self, id, first_name, last_name, phone_number):
+    def AddUser(self, user_data):
+        """
+        user_data یک تاپل است که شامل (id, first_name, last_name, phone_number) می‌باشد.
+        """
         insert_query = """
             INSERT INTO users (id, first_name, last_name, phone_number)
             VALUES (?, ?, ?, ?)
         """
         with sqlite3.connect(self.db_file) as connection:
             cursor = connection.cursor()
-            cursor.execute(insert_query, (id, first_name, last_name, phone_number))
+            cursor.execute(insert_query, user_data)
             connection.commit()
 
     @staticmethod

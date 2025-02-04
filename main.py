@@ -35,11 +35,11 @@ def contact(message):
         bot.send_message(message.chat.id, text=contact_info)
         data = (
             message.contact.user_id,
-            f'{message.contact.first_name}',
-            f'{message.contact.last_name}',
-            f'{message.contact.phone_number}',
+            message.contact.first_name,
+            message.contact.last_name,
+            message.contact.phone_number,
         )
-        Config().AddUser(*data)
+        Config().AddUser(data)
     else:
         bot.send_message(message.chat.id, text="اطلاعات تماس دریافت نشد.")
 
@@ -47,6 +47,13 @@ def contact(message):
 # Button dollar and gold
 reply_keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
 reply_keyboard2.add("دلار","طلا")
+
+
+# message button dollar and gold
+button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
+button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
+inline_keyboard = InlineKeyboardMarkup(row_width=2)
+inline_keyboard.add(button1, button2)
 
 
 @bot.message_handler(func=lambda message: True)
@@ -64,16 +71,6 @@ def check_button(message):
 
 
 
-# defining buttons
-
-button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
-button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
-inline_keyboard = InlineKeyboardMarkup(row_width=2)
-inline_keyboard.add(button1, button2)
-
-
-
-
 @bot.callback_query_handler(func=lambda call: call.data == "/help")
 def handle_help_callback(call):
     bot.answer_callback_query(call.id)
@@ -85,17 +82,34 @@ def welcome(message):
     bot.reply_to(message,'Hello to my bot.\n What is your name?',reply_markup=inline_keyboard)
 
 
-    bot.register_next_step_handler(message, process_name)
-def process_name(message):
-    name = message.text
-    bot.send_message(message.chat.id, f'Hello {name}.\nHow old are you?')
+#   bot.register_next_step_handler(message, process_name)
+# def process_name(message):
+#     name = message.text
+#     bot.send_message(message.chat.id, f'Hello {name}.\nHow old are you?')
+#
+#     bot.register_next_step_handler(message, process_age)
+# def process_age(message):
+#     age = message.text
+#     bot.send_message(message.chat.id, f'your are {age} years old.\n Thank You')
+#     print(user_ID)
 
-    bot.register_next_step_handler(message, process_age)
-def process_age(message):
-    age = message.text
-    bot.send_message(message.chat.id, f'your are {age} years old.\n Thank You')
-    print(user_ID)
 
+@bot.message_handler(content_types=['document', 'audio', 'voice', 'sticker', 'emoji'])
+def handle_docs_audio(message):
+    if message.audio:
+        bot.reply_to(message, 'this is a audio file')
+    elif message.document:
+        bot.reply_to(message, 'this is a document')
+    elif message.voice:
+        bot.reply_to(message, 'this is a voice message')
+    elif message.sticker:
+        bot.reply_to(message, 'this is a sticker message')
+    elif message.emoji:
+        bot.reply_to(message, 'this is a emoji')
+
+@bot.message_handler(regexp="ارز")
+def handle_2024(message):
+    bot.reply_to(message, 'الان نمیتونم بگم')
 #call back button
 @bot.callback_query_handler(func=lambda call: True)
 def check_button(call):
@@ -115,39 +129,28 @@ def sudo(message):
 
 
 
-@bot.message_handler(content_types=['document', 'audio', 'voice', 'sticker', 'emoji'])
-def handle_docs_audio(message):
-    if message.audio:
-        bot.reply_to(message, 'this is a audio file')
-    elif message.document:
-        bot.reply_to(message, 'this is a document')
-    elif message.voice:
-        bot.reply_to(message, 'this is a voice message')
-    elif message.sticker:
-        bot.reply_to(message, 'this is a sticker message')
-    elif message.emoji:
-        bot.reply_to(message, 'this is a emoji')
-
-@bot.message_handler(regexp="ارز")
-def handle_2024(message):
-    bot.reply_to(message, 'الان نمیتونم بگم')
 
 
-@bot.message_handler(func=lambda message: message.document.mime_type == 'text/plain', content_types=['document'])
-def handle_tst_doc (message):
-    bot.reply_to(message, 'this is a txt message')
 
-def txt_message (message):
-    return message.document.mime_type == 'text/plain'
-@bot.message_handler(func=txt_message, content_types=['document'])
-def handle_txt_message (message):
-    bot.reply_to(message, 'this is a txt message...')
+# @bot.message_handler(func=lambda message: message.document.mime_type == 'text/plain', content_types=['document'])
+# def handle_tst_doc (message):
+#     bot.reply_to(message, 'this is a txt message')
+#
+# def txt_message (message):
+#     return message.document.mime_type == 'text/plain'
 
-@bot.message_handler(commands=['hello'])
-@bot.message_handler(func=lambda msg: msg.text == 'helloooo')
-def send_hello(message):
-    bot.reply_to(message, 'wooooowwwww')
 
+# @bot.message_handler(func=txt_message, content_types=['document'])
+# def handle_txt_message (message):
+#     bot.reply_to(message, 'this is a txt message...')
+
+# @bot.message_handler(commands=['hello'])
+# @bot.message_handler(func=lambda msg: msg.text == 'helloooo')
+# def send_hello(message):
+#     bot.reply_to(message, 'wooooowwwww')
+
+
+# start bot
 while True:
     try:
         bot.polling(non_stop=True, timeout=5)  # زمان انتظار را تنظیم کنید
