@@ -9,9 +9,18 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 # BOT API
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 
-
-
-
+# gorupe setting
+@bot.message_handler(content_types=['new_chat_members'])
+def new_chat_members(message):
+    for user in message.new_chat_members:
+        if not user.is_bot:  # اگر کاربر ربات نبود
+            if user.username:  # اگر یوزرنیم دارد
+                welcome_msg = f"سلام {user.first_name} (@{user.username}) خوش اومدی! 🌟"
+            else:  # اگر یوزرنیم ندارد
+                welcome_msg = f"سلام {user.first_name} خوش اومدی! 🎉"
+            bot.send_message(message.chat.id, welcome_msg)
+        elif user.id == bot.get_me().id:  # اگر خود بات به گروه اضافه شد
+            bot.send_message(message.chat.id, "ممنون که من رو به گروه اضافه کردید! 🤖")
 # create first menu button
 
 reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, row_width=2)
