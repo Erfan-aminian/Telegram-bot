@@ -8,6 +8,19 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 #Config.GetUsers()
 # BOT API
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
+@bot.message_handler(regexp='الهه')
+def echo(message):
+    bot.send_message(message.chat.id, "عرفان عاشق الهه است و حاضره جونشو بده بخاطرش :))")
+
+@bot.message_handler(regexp='ازدواج')
+def echo2(message):
+    bot.send_message(message.chat.id, "معلومه صد در صد!!!")
+
+@bot.message_handler(regexp='عرفان')
+def echo3(message):
+    bot.send_message(message.chat.id, "عرفان شوهر آینده الهه قراره بشه. هنوز الهه عاشقش نشده ولی خیلی خیلی دوستش داره :))" )
+
+
 
 # gorupe setting
 @bot.message_handler(content_types=['new_chat_members'])
@@ -21,6 +34,31 @@ def new_chat_members(message):
             bot.send_message(message.chat.id, welcome_msg)
         elif user.id == bot.get_me().id:  # اگر خود بات به گروه اضافه شد
             bot.send_message(message.chat.id, "ممنون که من رو به گروه اضافه کردید! 🤖")
+# is user admin
+def is_user_admin(chat_id, user_id):
+    admins = bot.get_chat_administrators(chat_id)
+    for admin in admins:
+        if admin.user.id == user_id:
+            return True
+    return False
+@bot.message_handler(func=lambda message: message.text == "پین")
+def pin_message(message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+
+    if is_user_admin(chat_id, user_id):
+        if message.reply_to_message:
+            bot.pin_chat_message(chat_id, message.reply_to_message.message_id)
+            bot.reply_to(message.reply_to_message,"پیام مدنظرت رو با موفقیت پین کردم")
+        else:
+            bot.reply_to(message, "کدوم پیام رو میخوای پین کنی؟ \n برام ریپلای کن")
+    else:
+        bot.send_message(message.chat.id, "فقط ادمین میتونه پیامی رو پین کنه :(")
+
+
+
+
+
 # create first menu button
 
 reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, row_width=2)
@@ -78,8 +116,8 @@ def check_button(message):
     elif message.text == 'تماس با ما':
         bot.reply_to(message,"برنامه نویس این ربات عرفان هست ")
     else:
-        bot.send_message(message.chat.id, 'گزینه انتخابی رو پیدا نکردم')
-        bot.send_message(message.chat.id, '/start')
+        bot.send_message(message.chat.id, 'الهه گفت من باشعورممممممم')
+        #bot.send_message(message.chat.id, '/start')
         Config.GetUsers()
 
 
