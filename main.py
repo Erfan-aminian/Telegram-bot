@@ -3,11 +3,28 @@ from db_config import Config
 import telebot
 import time
 import sqlite3
+import requests
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 #Config.GetUsers()
 # BOT API
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
+# API KEY
+EXCHANGE_API_KEY = "577116453d976af87ea1649a"  # API Key دریافتی از exchangerate-api
+
+# API setting
+def get_exchange_rates(base_currency='IRR'):
+    url = f"https://open.er-api.com/v6/latest/{base_currency}"
+    response = requests.get(url, params={'apikey': EXCHANGE_API_KEY})
+    data = response.json()
+
+    if data['result'] == 'success':
+        return data['rates']
+    else:
+        return None
+
+
+
 @bot.message_handler(regexp='الهه')
 def echo(message):
     bot.send_message(message.chat.id, "عرفان عاشق الهه است و حاضره جونشو بده بخاطرش :))")
@@ -97,8 +114,33 @@ def contact(message):
 
 # Button dollar and gold
 reply_keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-reply_keyboard2.add("دلار","طلا")
+reply_keyboard2.add("دلار و ...","طلا")
 
+@bot.message_handler(regexp="دلار")
+def send_rates(message):
+    rates = get_exchange_rates(base_currency='USD')  # پایه دلار آمریکا
+
+    if rates:
+        # نرخ ارزها نسبت به دلار (۱ دلار = X ریال)
+        irr_rate = rates.get('IRR', 0)  # نرخ ریال نسبت به دلار
+        eur_rate = rates.get('EUR', 0)  # نرخ یورو نسبت به دلار
+        gbp_rate = rates.get('GBP', 0)  # نرخ پوند نسبت به دلار
+
+        # محاسبه قیمت هر ارز به ریال
+        usd_in_irr = irr_rate  # 1 دلار = X ریال
+        eur_in_irr = (1 / eur_rate) * irr_rate  # 1 یورو = (USD/EUR) * USD/IRR
+        gbp_in_irr = (1 / gbp_rate) * irr_rate  # 1 پوند = (USD/GBP) * USD/IRR
+
+        response_text = (
+            "💰 نرخ لحظه‌ای ارزها (به ریال):\n\n"
+            f"🇺🇸 دلار آمریکا: {usd_in_irr:,.0f} ریال\n"
+            f"🇪🇺 یورو اروپا: {eur_in_irr:,.0f} ریال\n"
+            f"🇬🇧 پوند انگلیس: {gbp_in_irr:,.0f} ریال"
+        )
+    else:
+        response_text = "⚠️ خطا در دریافت نرخ ارزها. لطفا بعدا تلاش کنید."
+
+    bot.send_message(message.chat.id, response_text)
 
 # message button dollar and gold
 button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
@@ -115,11 +157,10 @@ def check_button(message):
         bot.reply_to(message,"ما تو این ربات قیمت دلار، طلا و .. رو نمایش میدیم تو به کدومش نیاز داری ؟")
     elif message.text == 'تماس با ما':
         bot.reply_to(message,"برنامه نویس این ربات عرفان هست ")
-    else:
-        bot.send_message(message.chat.id, 'الهه گفت من باشعورممممممم')
+    #else:
+        #bot.send_message(message.chat.id, '')
         #bot.send_message(message.chat.id, '/start')
-        Config.GetUsers()
-
+        #Config.GetUsers()
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "/help")
