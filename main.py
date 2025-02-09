@@ -11,6 +11,8 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 bot = telebot.TeleBot('7554967329:AAEAY2pgTlmEF0d9NbQYKzRyR7u6Du3lwJs')
 # API KEY
 EXCHANGE_API_KEY = "577116453d976af87ea1649a"  # API Key دریافتی از exchangerate-api
+# Replace your channel's username without the @
+CHANNEL_USERNAME = "learn_en"
 
 # API setting
 def get_exchange_rates(base_currency='IRR'):
@@ -23,19 +25,26 @@ def get_exchange_rates(base_currency='IRR'):
     else:
         return None
 
+def is_user_member(user_id):
+    try:
+        member = bot.get_chat_member(chat_id=f"@{CHANNEL_USERNAME}", user_id=user_id)
+        if member.status in ['member', 'creator', 'administrator'] :
+            return True
+    except Exception as e:
+        print(f"Error: {e}")
+    return False
 
 
-@bot.message_handler(regexp='الهه')
-def echo(message):
-    bot.send_message(message.chat.id, "عرفان عاشق الهه است و حاضره جونشو بده بخاطرش :))")
+def main_button():
+    markup = ReplyKeyboardMarkup()
+    help = KeyboardButton(text='راهنما')
+    arz = KeyboardButton(text='ارز')
+    info = KeyboardButton(text='فرستادن اطلاعات', request_contact=True)
+    call = KeyboardButton(text='تماس با ما')
+    markup.add(help, arz, info, call)
+    return markup
 
-@bot.message_handler(regexp='ازدواج')
-def echo2(message):
-    bot.send_message(message.chat.id, "معلومه صد در صد!!!")
 
-@bot.message_handler(regexp='عرفان')
-def echo3(message):
-    bot.send_message(message.chat.id, "عرفان شوهر آینده الهه قراره بشه. هنوز الهه عاشقش نشده ولی خیلی خیلی دوستش داره :))" )
 
 
 
@@ -78,17 +87,20 @@ def pin_message(message):
 
 # create first menu button
 
-reply_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, row_width=2)
-button = KeyboardButton(text='send my info', request_contact=True)
-reply_keyboard.add("ارز","راهنما",button,"تماس با ما")
+
 
 #message handler for /start
 user_ID = []
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, text='خوش اومدی عزیزم', reply_markup=reply_keyboard)
-    if message.chat.id not in user_ID:
-        user_ID.append(message.chat.id)
+    user_id = message.from_user.id
+    if is_user_member(user_id):
+        bot.send_message(message.chat.id, text='خوش اومدی عزیزم', reply_markup=main_button())
+        if message.chat.id not in user_ID:
+            user_ID.append(message.chat.id)
+    else:
+        bot.send_message(message.chat.id, text=f"تو باید داخل کانال زیر عضو بشی!")
+        bot.send_message(message.chat.id, text=f"@{CHANNEL_USERNAME}")
 
 # message handler for contact
 @bot.message_handler(content_types=['contact'])
@@ -240,6 +252,19 @@ def sudo(message):
 # @bot.message_handler(func=lambda msg: msg.text == 'helloooo')
 # def send_hello(message):
 #     bot.reply_to(message, 'wooooowwwww')
+
+
+# @bot.message_handler(regexp='الهه')
+# def echo(message):
+#     bot.send_message(message.chat.id, "عرفان عاشق الهه است و حاضره جونشو بده بخاطرش :))")
+#
+# @bot.message_handler(regexp='ازدواج')
+# def echo2(message):
+#     bot.send_message(message.chat.id, "معلومه صد در صد!!!")
+#
+# @bot.message_handler(regexp='عرفان')
+# def echo3(message):
+#     bot.send_message(message.chat.id, "عرفان شوهر آینده الهه قراره بشه. هنوز الهه عاشقش نشده ولی خیلی خیلی دوستش داره :))" )
 
 
 # start bot
