@@ -46,6 +46,8 @@ def main_button():
 
 
 
+ch_button = InlineKeyboardButton(text=f'@{CHANNEL_USERNAME}', callback_data='ch')
+ch_button = InlineKeyboardMarkup.add(ch_button)
 
 
 # gorupe setting
