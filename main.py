@@ -256,18 +256,6 @@ def sudo(message):
 #     bot.reply_to(message, 'wooooowwwww')
 
 
-# @bot.message_handler(regexp='الهه')
-# def echo(message):
-#     bot.send_message(message.chat.id, "عرفان عاشق الهه است و حاضره جونشو بده بخاطرش :))")
-#
-# @bot.message_handler(regexp='ازدواج')
-# def echo2(message):
-#     bot.send_message(message.chat.id, "معلومه صد در صد!!!")
-#
-# @bot.message_handler(regexp='عرفان')
-# def echo3(message):
-#     bot.send_message(message.chat.id, "عرفان شوهر آینده الهه قراره بشه. هنوز الهه عاشقش نشده ولی خیلی خیلی دوستش داره :))" )
-
 
 # start bot
 while True:
