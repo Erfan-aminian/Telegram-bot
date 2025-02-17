@@ -15,15 +15,15 @@ EXCHANGE_API_KEY = "577116453d976af87ea1649a"  # API Key دریافتی از exc
 CHANNEL_USERNAME = "learn_en"
 
 # API setting
-def get_exchange_rates(base_currency='IRR'):
-    url = f"https://open.er-api.com/v6/latest/{base_currency}"
-    response = requests.get(url, params={'apikey': EXCHANGE_API_KEY})
-    data = response.json()
 
-    if data['result'] == 'success':
-        return data['rates']
-    else:
-        return None
+url = "http://brsapi.ir/FreeTsetmcBourseApi/Api_Free_Gold_Currency.json"
+response = requests.get(url)
+
+if response.status_code == 200:
+    data = response.json()
+    print(data)
+else:
+    print(f"خطا! کد وضعیت: {response.status_code}")
 
 def is_user_member(user_id):
     try:
@@ -129,33 +129,44 @@ def contact(message):
 # Button dollar and gold
 reply_keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
 reply_keyboard2.add("دلار و ...","طلا")
+@bot.message_handler(regexp="طلا")
+def send_gold(message):
+    # ساخت پیام
+    try:
+        response = requests.get(url)
+        data = response.json()
+        gold_msg = "💰 <b>قیمت طلا:</b>\n"
+        for item in data.get('gold', [])[:5]:  # نمایش 5 آیتم اول
+            gold_msg += f"• {item['name']}: {item['price']:,} {item['unit']}\n"
+
+        msg = gold_msg
+        bot.send_message(message.chat.id, msg, parse_mode='HTML')
+
+    except Exception as e:
+        bot.reply_to(message, f"⚠️ خطا در دریافت اطلاعات! ({str(e)})")
 
 @bot.message_handler(regexp="دلار")
 def send_rates(message):
-    rates = get_exchange_rates(base_currency='USD')  # پایه دلار آمریکا
+    try:
+        # دریافت داده از API
+        response = requests.get(url)
+        data = response.json()
 
-    if rates:
-        # نرخ ارزها نسبت به دلار (۱ دلار = X ریال)
-        irr_rate = rates.get('IRR', 0)  # نرخ ریال نسبت به دلار
-        eur_rate = rates.get('EUR', 0)  # نرخ یورو نسبت به دلار
-        gbp_rate = rates.get('GBP', 0)  # نرخ پوند نسبت به دلار
 
-        # محاسبه قیمت هر ارز به ریال
-        usd_in_irr = irr_rate  # 1 دلار = X ریال
-        eur_in_irr = (1 / eur_rate) * irr_rate  # 1 یورو = (USD/EUR) * USD/IRR
-        gbp_in_irr = (1 / gbp_rate) * irr_rate  # 1 پوند = (USD/GBP) * USD/IRR
 
-        response_text = (
-            "💰 نرخ لحظه‌ای ارزها (به ریال):\n\n"
-            f"🇺🇸 دلار آمریکا: {usd_in_irr:,.0f} ریال\n"
-            f"🇪🇺 یورو اروپا: {eur_in_irr:,.0f} ریال\n"
-            f"🇬🇧 پوند انگلیس: {gbp_in_irr:,.0f} ریال"
-        )
-    else:
-        response_text = "⚠️ خطا در دریافت نرخ ارزها. لطفا بعدا تلاش کنید."
+        currency_msg = "\n💵 <b>قیمت ارزها:</b>\n"
+        for item in data.get('currency', [])[:10]:
+            currency_msg += f"• {item['name']}: {item['price']:,} {item['unit']}\n"
 
-    bot.send_message(message.chat.id, response_text)
+        crypto_msg = "\n🪙 <b>ارزهای دیجیتال:</b>\n"
+        for item in data.get('cryptocurrency', []):
+            crypto_msg += f"• {item['name']}: {item['price']:,} {item['unit']}\n"
 
+        full_msg = currency_msg + crypto_msg
+        bot.send_message(message.chat.id, full_msg, parse_mode='HTML')
+
+    except Exception as e:
+        bot.reply_to(message, f"⚠️ خطا در دریافت اطلاعات! ({str(e)})")
 # message button dollar and gold
 button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
 button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
