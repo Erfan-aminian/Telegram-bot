@@ -128,7 +128,7 @@ def contact(message):
 
 # Button dollar and gold
 reply_keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-reply_keyboard2.add("دلار و ...","طلا")
+reply_keyboard2.add("دلار","کریپتو","طلا")
 @bot.message_handler(regexp="طلا")
 def send_gold(message):
     # ساخت پیام
@@ -158,15 +158,26 @@ def send_rates(message):
         for item in data.get('currency', [])[:10]:
             currency_msg += f"• {item['name']}: {item['price']:,} {item['unit']}\n"
 
-        crypto_msg = "\n🪙 <b>ارزهای دیجیتال:</b>\n"
-        for item in data.get('cryptocurrency', []):
-            crypto_msg += f"• {item['name']}: {item['price']:,} {item['unit']}\n"
 
-        full_msg = currency_msg + crypto_msg
+
+        full_msg = currency_msg
         bot.send_message(message.chat.id, full_msg, parse_mode='HTML')
 
     except Exception as e:
         bot.reply_to(message, f"⚠️ خطا در دریافت اطلاعات! ({str(e)})")
+@bot.message_handler(regexp="کریپتو")
+def send_crypto(message):
+    try:
+        response = requests.get(url)
+        data = response.json()
+        crypto_msg = "\n🪙 <b>ارزهای دیجیتال:</b>\n"
+        for item in data.get('cryptocurrency', []):
+            crypto_msg += f"• {item['name']}: {item['price']:,} {item['unit']}\n"
+        msg = crypto_msg
+        bot.send_message(message.chat.id, msg, parse_mode='HTML')
+    except Exception as e:
+        bot.reply_to(message, f"⚠️ خطا در دریافت اطلاعات! ({str(e)})")
+
 # message button dollar and gold
 button1 = InlineKeyboardButton(text='Dollar', callback_data= 'button_dollar')
 button2 = InlineKeyboardButton(text='Gold', callback_data= 'button_gold')
