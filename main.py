@@ -263,19 +263,18 @@ def sudo(message):
 # @bot.message_handler(func=lambda message: message.document.mime_type == 'text/plain', content_types=['document'])
 # def handle_tst_doc (message):
 #     bot.reply_to(message, 'this is a txt message')
-#
+
 # def txt_message (message):
 #     return message.document.mime_type == 'text/plain'
-
 
 # @bot.message_handler(func=txt_message, content_types=['document'])
 # def handle_txt_message (message):
 #     bot.reply_to(message, 'this is a txt message...')
 
 # @bot.message_handler(commands=['hello'])
-# @bot.message_handler(func=lambda msg: msg.text == 'helloooo')
+# @bot.message_handler(func=lambda msg: msg.text == 'hello')
 # def send_hello(message):
-#     bot.reply_to(message, 'wooooowwwww')
+#     bot.reply_to(message, 'wow')
 
 
 
