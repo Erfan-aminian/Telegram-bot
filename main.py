@@ -207,7 +207,6 @@ def check_button(message):
              🔥 *قبول سفارشات جدید تحت نظر مستقیم برنامه‌نویس*"""
                      , parse_mode='Markdown')
 
-
     #else:
         #Config.GetUsers()
 
@@ -217,10 +216,10 @@ def handle_help_callback(call):
     bot.answer_callback_query(call.id)
     bot.send_message(call.message.chat.id, "این بخش راهنماست...")
 
-@bot.message_handler(commands=['help'])
-def welcome(message):
-    # bot.send_message(message.chat.id, 'welcome to my bot.')
-    bot.reply_to(message,'Hello to my bot.\n What is your name?',reply_markup=inline_keyboard)
+# @bot.message_handler(commands=['help'])
+# def welcome(message):
+#     # bot.send_message(message.chat.id, 'welcome to my bot.')
+#     bot.reply_to(message,'Hello to my bot.\n What is your name?',reply_markup=inline_keyboard)
 
 
 #   bot.register_next_step_handler(message, process_name)
